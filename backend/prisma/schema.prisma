@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ClassStream {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students       Student[]
+  streamSubjects StreamSubject[]
+
+  @@map("class_streams")
+}
+
+model Student {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  admissionNo String   @unique
+  gender      String
+  dob         DateTime
+  streamId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stream ClassStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  scores Score[]
+
+  @@map("students")
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  streamSubjects StreamSubject[]
+  scores         Score[]
+
+  @@map("subjects")
+}
+
+model StreamSubject {
+  id        String @id @default(uuid())
+  streamId  String
+  subjectId String
+
+  stream  ClassStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  subject Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([streamId, subjectId])
+  @@map("stream_subjects")
+}
+
+model Score {
+  id        String   @id @default(uuid())
+  studentId String
+  subjectId String
+  examScore Float    @default(0)
+  catScore  Float    @default(0)
+  term      Int
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, subjectId, term, year])
+  @@map("scores")
+}
+
+model GradingScale {
+  id       String @id @default(uuid())
+  minScore Float
+  maxScore Float
+  grade    String
+  points   Int
+  remarks  String
+
+  @@map("grading_scales")
+}
