@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Student, ClassStream } from '@/types';
 import Modal from '@/components/Modal';
@@ -11,13 +11,13 @@ type FormData = { firstName: string; lastName: string; admissionNo: string; gend
 const EMPTY: FormData = { firstName: '', lastName: '', admissionNo: '', gender: '', dob: '', streamId: '' };
 
 export default function StudentsPage() {
-  const params = useSearchParams();
-  const filterStream = params.get('stream_id') ?? '';
+  // const params = useSearchParams();
+  // const filterStream = params.get('stream_id') ?? '';
 
   const [students, setStudents] = useState<Student[]>([]);
   const [streams, setStreams] = useState<ClassStream[]>([]);
   const [search, setSearch] = useState('');
-  const [streamFilter, setStreamFilter] = useState(filterStream);
+  const [streamFilter, setStreamFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<'create' | 'edit' | null>(null);
   const [selected, setSelected] = useState<Student | null>(null);
